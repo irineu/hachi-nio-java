@@ -1,6 +1,7 @@
 package br.com.irineuantunes.hachinio;
 
 import br.com.irineuantunes.hachinio.handlers.HachiNIOHandler;
+import br.com.irineuantunes.hachinio.util.ByteUtil;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousServerSocketChannel;
@@ -38,23 +39,24 @@ public class Main {
 
                 @Override
                 public void onMessage(AsynchronousSocketChannel channel, Map header, byte[] message) {
-                    System.out.println("on message");
+                    System.out.println(header.get("transaction"));
+                    System.out.println(ByteUtil.bytesToHex(message));
                 }
             });
 
             server.listen();
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(10000);
-                        server.close();
-                    } catch (InterruptedException | IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        Thread.sleep(10000);
+//                        server.close();
+//                    } catch (InterruptedException | IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }).start();
 
 
             HachiNIOServer server2 = new HachiNIOServer("127.0.0.1", 3575, new HachiNIOHandler() {
@@ -88,7 +90,7 @@ public class Main {
                 }
             });
 
-            server2.listen();
+            //server2.listen();
 
 
 

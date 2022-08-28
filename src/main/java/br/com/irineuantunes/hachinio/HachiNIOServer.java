@@ -2,6 +2,7 @@ package br.com.irineuantunes.hachinio;
 
 import br.com.irineuantunes.hachinio.handlers.HachiNIOHandler;
 import br.com.irineuantunes.hachinio.handlers.ServerReadCompletionHandler;
+import br.com.irineuantunes.hachinio.util.NIOData;
 import br.com.irineuantunes.hachinio.util.ProcessUtil;
 
 import java.io.IOException;
@@ -15,8 +16,7 @@ import java.util.Map;
 
 public class HachiNIOServer implements HachiNIO {
 
-    private Map<AsynchronousSocketChannel, ByteBuffer> socketMessageMap;
-    private Map<AsynchronousSocketChannel, ServerReadCompletionHandler> readCompleteHandlerMap;
+    private Map<AsynchronousSocketChannel, NIOData> nioDataMap;
     private HachiNIOHandler handler;
     private String bindAddr;
     private Integer bindPort;
@@ -31,20 +31,8 @@ public class HachiNIOServer implements HachiNIO {
         this.listening = listening;
     }
 
-    public Map<AsynchronousSocketChannel, ByteBuffer> getSocketMessageMap() {
-        return socketMessageMap;
-    }
-
-    public void setSocketMessageMap(Map<AsynchronousSocketChannel, ByteBuffer> socketMessageMap) {
-        this.socketMessageMap = socketMessageMap;
-    }
-
-    public Map<AsynchronousSocketChannel, ServerReadCompletionHandler> getReadCompleteHandlerMap() {
-        return readCompleteHandlerMap;
-    }
-
-    public void setReadCompleteHandlerMap(Map<AsynchronousSocketChannel, ServerReadCompletionHandler> readCompleteHandlerMap) {
-        this.readCompleteHandlerMap = readCompleteHandlerMap;
+    public Map<AsynchronousSocketChannel, NIOData> getNioDataMap() {
+        return nioDataMap;
     }
 
     public HachiNIOHandler getHandler() {
@@ -60,8 +48,7 @@ public class HachiNIOServer implements HachiNIO {
         this.bindPort = bindPort;
         this.handler = hanler;
 
-        this.socketMessageMap = new HashMap<>();
-        this.readCompleteHandlerMap = new HashMap<>();
+        this.nioDataMap = new HashMap<>();
     }
 
     private void startWrite( AsynchronousSocketChannel clientSockChannel, final ByteBuffer buf) {
@@ -93,16 +80,18 @@ public class HachiNIOServer implements HachiNIO {
             @Override
             public void completed(AsynchronousSocketChannel clientSockChannel, AsynchronousServerSocketChannel serverSockChannel ) {
 
-                socketMessageMap.put(clientSockChannel, ByteBuffer.allocate(8));
-                readCompleteHandlerMap.put(clientSockChannel, new ServerReadCompletionHandler(instance));
-
+                nioDataMap.put(clientSockChannel, new NIOData(ByteBuffer.allocate(512), new ServerReadCompletionHandler(instance)));
                 instance.getHandler().onConnect(clientSockChannel);
 
                 if (serverSockChannel.isOpen()) {
                     serverSockChannel.accept(serverSockChannel, this);
                 }
 
-                clientSockChannel.read(socketMessageMap.get(clientSockChannel), clientSockChannel, readCompleteHandlerMap.get(clientSockChannel));
+                clientSockChannel.read(
+                        nioDataMap.get(clientSockChannel).getSocketByteBuffer(),
+                        clientSockChannel,
+                        nioDataMap.get(clientSockChannel).getReadCompleteHandler()
+                );
             }
 
             @Override
@@ -122,13 +111,12 @@ public class HachiNIOServer implements HachiNIO {
     }
 
     @Override
-    public void close() throws IOException {
+    public void stop() throws IOException {
         this.serverSockChannel.close();
-        for (AsynchronousSocketChannel activeClient : socketMessageMap.keySet()) {
+        for (AsynchronousSocketChannel activeClient : nioDataMap.keySet()) {
             activeClient.close();
         }
-        this.socketMessageMap.clear();
-        this.readCompleteHandlerMap.clear();
+        this.nioDataMap.clear();
         this.setListening(false);
     }
 }

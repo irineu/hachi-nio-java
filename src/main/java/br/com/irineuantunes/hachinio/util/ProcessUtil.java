@@ -39,7 +39,7 @@ class LivingThread extends Thread{
         while(serversAndClients.size() > 0) {
             try {
                 Thread.sleep(1 * 1000);
-                System.out.println("tick " + serversAndClients.size());
+                //System.out.println("tick " + serversAndClients.size());
                 for (int i = 0; i < serversAndClients.size(); i++) {
                     if (!serversAndClients.get(i).isActive()) {
                         serversAndClients.remove(i);

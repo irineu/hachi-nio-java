@@ -3,6 +3,10 @@ package br.com.irineuantunes.hachinio.util;
 import java.nio.charset.StandardCharsets;
 
 public class ByteUtil {
+
+    public static short HACHI_LEN = 8;
+    public static short INT_LEN = 4;
+
     private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
     public static String bytesToHex(byte[] bytes) {
         byte[] hexChars = new byte[bytes.length * 2];

@@ -6,5 +6,5 @@ public interface HachiNIO {
 
     boolean isActive();
 
-    void close() throws IOException;
+    void stop() throws IOException;
 }
