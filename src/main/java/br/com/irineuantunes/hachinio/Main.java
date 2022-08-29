@@ -1,11 +1,11 @@
 package br.com.irineuantunes.hachinio;
 
-import br.com.irineuantunes.hachinio.handlers.HachiNIOHandler;
+import br.com.irineuantunes.hachinio.network.handlers.HachiNIOHandler;
 import br.com.irineuantunes.hachinio.util.ByteUtil;
+import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousServerSocketChannel;
-import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Map;
 
 public class Main {
@@ -14,17 +14,17 @@ public class Main {
         try {
             HachiNIOServer server = new HachiNIOServer("127.0.0.1", 3575, new HachiNIOHandler() {
                 @Override
-                public void onConnect(AsynchronousSocketChannel channel) {
+                public void onConnect(HachiNIOConnection connection) {
                     System.out.println("on connect");
                 }
 
                 @Override
-                public void onDisconnect(AsynchronousSocketChannel channel) {
+                public void onDisconnect(HachiNIOConnection connection) {
                     System.out.println("on disconnect");
                 }
 
                 @Override
-                public void onClientError(Throwable ex, AsynchronousSocketChannel channel) {
+                public void onClientError(Throwable ex, HachiNIOConnection connection) {
                     if(ex.getMessage() != null){
                         ex.printStackTrace();
                     }
@@ -38,9 +38,19 @@ public class Main {
                 }
 
                 @Override
-                public void onMessage(AsynchronousSocketChannel channel, Map header, byte[] message) {
+                public void onMessage(HachiNIOConnection connection, Map header, byte[] message) {
                     System.out.println(header.get("transaction"));
                     System.out.println(ByteUtil.bytesToHex(message));
+                    try {
+                        connection.send(header, message);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onWritten(HachiNIOConnection connection) {
+                    System.out.println("written");
                 }
             });
 
@@ -61,17 +71,17 @@ public class Main {
 
             HachiNIOServer server2 = new HachiNIOServer("127.0.0.1", 3575, new HachiNIOHandler() {
                 @Override
-                public void onConnect(AsynchronousSocketChannel channel) {
+                public void onConnect(HachiNIOConnection connection) {
                     System.out.println("on connect");
                 }
 
                 @Override
-                public void onDisconnect(AsynchronousSocketChannel channel) {
+                public void onDisconnect(HachiNIOConnection connection) {
                     System.out.println("on disconnect");
                 }
 
                 @Override
-                public void onClientError(Throwable ex, AsynchronousSocketChannel channel) {
+                public void onClientError(Throwable ex, HachiNIOConnection connection) {
                     if(ex.getMessage() != null){
                         ex.printStackTrace();
                     }
@@ -85,8 +95,13 @@ public class Main {
                 }
 
                 @Override
-                public void onMessage(AsynchronousSocketChannel channel, Map header, byte[] message) {
+                public void onMessage(HachiNIOConnection connection, Map header, byte[] message) {
                     System.out.println("on message");
+                }
+
+                @Override
+                public void onWritten(HachiNIOConnection connection) {
+                    System.out.println("written");
                 }
             });
 

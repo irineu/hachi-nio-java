@@ -1,8 +1,9 @@
 package br.com.irineuantunes.hachinio;
 
-import br.com.irineuantunes.hachinio.handlers.HachiNIOHandler;
-import br.com.irineuantunes.hachinio.handlers.ServerReadCompletionHandler;
-import br.com.irineuantunes.hachinio.util.NIOData;
+import br.com.irineuantunes.hachinio.network.handlers.HachiNIOHandler;
+import br.com.irineuantunes.hachinio.network.handlers.ServerReadCompletionHandler;
+import br.com.irineuantunes.hachinio.network.handlers.ServerWriteCompletionHandler;
+import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
 import br.com.irineuantunes.hachinio.util.ProcessUtil;
 
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 public class HachiNIOServer implements HachiNIO {
 
-    private Map<AsynchronousSocketChannel, NIOData> nioDataMap;
+    private Map<AsynchronousSocketChannel, HachiNIOConnection> connectionMap;
     private HachiNIOHandler handler;
     private String bindAddr;
     private Integer bindPort;
@@ -31,8 +32,8 @@ public class HachiNIOServer implements HachiNIO {
         this.listening = listening;
     }
 
-    public Map<AsynchronousSocketChannel, NIOData> getNioDataMap() {
-        return nioDataMap;
+    public Map<AsynchronousSocketChannel, HachiNIOConnection> getConnectionMap() {
+        return connectionMap;
     }
 
     public HachiNIOHandler getHandler() {
@@ -47,26 +48,7 @@ public class HachiNIOServer implements HachiNIO {
         this.bindAddr = bindAddr;
         this.bindPort = bindPort;
         this.handler = hanler;
-
-        this.nioDataMap = new HashMap<>();
-    }
-
-    private void startWrite( AsynchronousSocketChannel clientSockChannel, final ByteBuffer buf) {
-        HachiNIOServer instance = this;
-
-        clientSockChannel.write(buf, clientSockChannel, new CompletionHandler<Integer, AsynchronousSocketChannel >() {
-
-            @Override
-            public void completed(Integer result, AsynchronousSocketChannel clientSockChannel) {
-                //finish to write message to client, nothing to do
-            }
-
-            @Override
-            public void failed(Throwable ex, AsynchronousSocketChannel clientSockChannel) {
-                instance.getHandler().onClientError(ex, clientSockChannel);
-            }
-
-        });
+        this.connectionMap = new HashMap<>();
     }
 
     public void listen() throws IOException, InterruptedException {
@@ -80,17 +62,19 @@ public class HachiNIOServer implements HachiNIO {
             @Override
             public void completed(AsynchronousSocketChannel clientSockChannel, AsynchronousServerSocketChannel serverSockChannel ) {
 
-                nioDataMap.put(clientSockChannel, new NIOData(ByteBuffer.allocate(512), new ServerReadCompletionHandler(instance)));
-                instance.getHandler().onConnect(clientSockChannel);
+                HachiNIOConnection connection = new HachiNIOConnection(ByteBuffer.allocate(512), new ServerReadCompletionHandler(instance), new ServerWriteCompletionHandler(instance), clientSockChannel);
+
+                connectionMap.put(clientSockChannel, connection);
+                instance.getHandler().onConnect(connection);
 
                 if (serverSockChannel.isOpen()) {
                     serverSockChannel.accept(serverSockChannel, this);
                 }
 
                 clientSockChannel.read(
-                        nioDataMap.get(clientSockChannel).getSocketByteBuffer(),
+                        connectionMap.get(clientSockChannel).getSocketByteBuffer(),
                         clientSockChannel,
-                        nioDataMap.get(clientSockChannel).getReadCompleteHandler()
+                        connectionMap.get(clientSockChannel).getReadCompleteHandler()
                 );
             }
 
@@ -113,10 +97,10 @@ public class HachiNIOServer implements HachiNIO {
     @Override
     public void stop() throws IOException {
         this.serverSockChannel.close();
-        for (AsynchronousSocketChannel activeClient : nioDataMap.keySet()) {
+        for (AsynchronousSocketChannel activeClient : connectionMap.keySet()) {
             activeClient.close();
         }
-        this.nioDataMap.clear();
+        this.connectionMap.clear();
         this.setListening(false);
     }
 }
