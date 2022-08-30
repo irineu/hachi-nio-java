@@ -1,4 +1,4 @@
-package br.com.irineuantunes.hachinio;
+package com.irineuantunes.hachinio;
 
 import java.io.IOException;
 

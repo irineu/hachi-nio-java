@@ -1,9 +1,9 @@
-package br.com.irineuantunes.hachinio.network;
+package com.irineuantunes.hachinio.network;
 
-import br.com.irineuantunes.hachinio.network.handlers.ServerReadCompletionHandler;
-import br.com.irineuantunes.hachinio.network.handlers.ServerWriteCompletionHandler;
-import br.com.irineuantunes.hachinio.network.handlers.protocol.NIOProtocolWritter;
-import br.com.irineuantunes.hachinio.util.ByteUtil;
+import com.irineuantunes.hachinio.network.handlers.ServerReadCompletionHandler;
+import com.irineuantunes.hachinio.network.handlers.ServerWriteCompletionHandler;
+import com.irineuantunes.hachinio.network.handlers.protocol.NIOProtocolWritter;
+import com.irineuantunes.hachinio.util.ByteUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

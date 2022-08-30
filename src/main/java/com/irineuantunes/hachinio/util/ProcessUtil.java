@@ -1,6 +1,6 @@
-package br.com.irineuantunes.hachinio.util;
+package com.irineuantunes.hachinio.util;
 
-import br.com.irineuantunes.hachinio.HachiNIO;
+import com.irineuantunes.hachinio.HachiNIO;
 
 import java.util.ArrayList;
 import java.util.List;

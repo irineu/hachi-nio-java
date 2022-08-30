@@ -1,8 +1,8 @@
-package br.com.irineuantunes.hachinio.network.handlers.protocol;
+package com.irineuantunes.hachinio.network.handlers.protocol;
 
-import br.com.irineuantunes.hachinio.HachiNIOServer;
-import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
-import br.com.irineuantunes.hachinio.util.ByteUtil;
+import com.irineuantunes.hachinio.HachiNIOServer;
+import com.irineuantunes.hachinio.network.HachiNIOConnection;
+import com.irineuantunes.hachinio.util.ByteUtil;
 import com.google.gson.Gson;
 
 import java.io.IOException;

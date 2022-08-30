@@ -1,10 +1,9 @@
-package br.com.irineuantunes.hachinio;
+package com.irineuantunes.hachinio;
 
-import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
-import br.com.irineuantunes.hachinio.network.handlers.HachiNIOHandler;
+import com.irineuantunes.hachinio.network.HachiNIOConnection;
+import com.irineuantunes.hachinio.network.handlers.HachiNIOHandler;
 
 import java.io.IOException;
-import java.nio.channels.AsynchronousServerSocketChannel;
 import java.util.Map;
 
 public class MainClient {

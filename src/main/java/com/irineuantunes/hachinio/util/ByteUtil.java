@@ -1,4 +1,4 @@
-package br.com.irineuantunes.hachinio.util;
+package com.irineuantunes.hachinio.util;
 
 import java.nio.charset.StandardCharsets;
 

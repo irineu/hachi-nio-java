@@ -1,4 +1,4 @@
-package br.com.irineuantunes.hachinio.network.handlers;
+package com.irineuantunes.hachinio.network.handlers;
 
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;

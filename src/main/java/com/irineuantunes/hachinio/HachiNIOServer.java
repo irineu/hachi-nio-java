@@ -1,10 +1,10 @@
-package br.com.irineuantunes.hachinio;
+package com.irineuantunes.hachinio;
 
-import br.com.irineuantunes.hachinio.network.handlers.HachiNIOServerHandler;
-import br.com.irineuantunes.hachinio.network.handlers.ServerReadCompletionHandler;
-import br.com.irineuantunes.hachinio.network.handlers.ServerWriteCompletionHandler;
-import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
-import br.com.irineuantunes.hachinio.util.ProcessUtil;
+import com.irineuantunes.hachinio.network.handlers.HachiNIOServerHandler;
+import com.irineuantunes.hachinio.network.handlers.ServerReadCompletionHandler;
+import com.irineuantunes.hachinio.network.handlers.ServerWriteCompletionHandler;
+import com.irineuantunes.hachinio.network.HachiNIOConnection;
+import com.irineuantunes.hachinio.util.ProcessUtil;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

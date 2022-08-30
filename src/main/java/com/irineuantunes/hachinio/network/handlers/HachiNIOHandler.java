@@ -1,8 +1,7 @@
-package br.com.irineuantunes.hachinio.network.handlers;
+package com.irineuantunes.hachinio.network.handlers;
 
-import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
+import com.irineuantunes.hachinio.network.HachiNIOConnection;
 
-import java.nio.channels.AsynchronousServerSocketChannel;
 import java.util.Map;
 
 public interface HachiNIOHandler {

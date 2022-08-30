@@ -1,9 +1,8 @@
-package br.com.irineuantunes.hachinio;
+package com.irineuantunes.hachinio;
 
-import br.com.irineuantunes.hachinio.network.handlers.HachiNIOHandler;
-import br.com.irineuantunes.hachinio.network.handlers.HachiNIOServerHandler;
-import br.com.irineuantunes.hachinio.util.ByteUtil;
-import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
+import com.irineuantunes.hachinio.network.handlers.HachiNIOServerHandler;
+import com.irineuantunes.hachinio.util.ByteUtil;
+import com.irineuantunes.hachinio.network.HachiNIOConnection;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousServerSocketChannel;

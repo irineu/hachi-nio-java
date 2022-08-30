@@ -1,8 +1,8 @@
-package br.com.irineuantunes.hachinio.network.handlers;
+package com.irineuantunes.hachinio.network.handlers;
 
-import br.com.irineuantunes.hachinio.HachiNIOServer;
-import br.com.irineuantunes.hachinio.network.handlers.protocol.NIOProtocolReader;
-import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
+import com.irineuantunes.hachinio.HachiNIOServer;
+import com.irineuantunes.hachinio.network.handlers.protocol.NIOProtocolReader;
+import com.irineuantunes.hachinio.network.HachiNIOConnection;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousCloseException;
