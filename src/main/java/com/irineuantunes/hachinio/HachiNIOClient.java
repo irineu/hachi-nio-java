@@ -28,12 +28,13 @@ public class HachiNIOClient implements HachiNIO {
     }
 
     public void connect() throws IOException {
+        HachiNIOClient instance = this;
         sockChannel = AsynchronousSocketChannel.open();
         sockChannel.connect( new InetSocketAddress(this.srvAddr, this.srvPort), sockChannel, new CompletionHandler<Void, AsynchronousSocketChannel >() {
 
             @Override
             public void completed(Void unused, AsynchronousSocketChannel asyncSocketChannel) {
-                connection = new HachiNIOConnection(ByteBuffer.allocate(512), new ClientReadCompletionHandler(), new ClientWriteCompletionHandler(), asyncSocketChannel);
+                connection = new HachiNIOConnection(ByteBuffer.allocate(512), new ClientReadCompletionHandler(instance), new ClientWriteCompletionHandler(instance), asyncSocketChannel);
 
                 handler.onConnect(connection);
 
@@ -53,6 +54,14 @@ public class HachiNIOClient implements HachiNIO {
 
         this.isAlive = true;
         ProcessUtil.attach(this);
+    }
+
+    public HachiNIOConnection getConnection() {
+        return connection;
+    }
+
+    public HachiNIOHandler getHandler() {
+        return handler;
     }
 
     @Override

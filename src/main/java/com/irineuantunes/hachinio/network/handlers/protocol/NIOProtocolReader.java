@@ -1,5 +1,6 @@
 package com.irineuantunes.hachinio.network.handlers.protocol;
 
+import com.irineuantunes.hachinio.HachiNIO;
 import com.irineuantunes.hachinio.HachiNIOServer;
 import com.irineuantunes.hachinio.network.HachiNIOConnection;
 import com.irineuantunes.hachinio.util.ByteUtil;
@@ -11,7 +12,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class NIOProtocolReader {
-    public static void read(HachiNIOConnection connection, HachiNIOServer hachiNIOServer) {
+    public static void read(HachiNIOConnection connection, HachiNIO hachiNIO) {
         try {
             byte arr [] = connection.getSocketByteBuffer().array();
             boolean retry = true;
@@ -61,7 +62,7 @@ public class NIOProtocolReader {
                     String strHeader = new String(connection.getHeaderOutputStream().toString());
                     Map header = new Gson().fromJson(strHeader, Map.class);
 
-                    hachiNIOServer.getHandler().onMessage(connection, header, connection.getMessageOutputStream().toByteArray());
+                    hachiNIO.getHandler().onMessage(connection, header, connection.getMessageOutputStream().toByteArray());
 
                     connection.clear();
                 }

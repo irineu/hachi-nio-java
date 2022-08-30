@@ -27,22 +27,4 @@ public class ServerWriteCompletionHandler  implements CompletionHandler<Integer,
             exc.printStackTrace();
         }
     }
-
-    /*private void startWrite( AsynchronousSocketChannel clientSockChannel, final ByteBuffer buf) {
-        HachiNIOServer instance = this;
-
-        clientSockChannel.write(buf, clientSockChannel, new CompletionHandler<Integer, AsynchronousSocketChannel >() {
-
-            @Override
-            public void completed(Integer result, AsynchronousSocketChannel clientSockChannel) {
-
-            }
-
-            @Override
-            public void failed(Throwable ex, AsynchronousSocketChannel clientSockChannel) {
-
-            }
-
-        });
-    }*/
 }
