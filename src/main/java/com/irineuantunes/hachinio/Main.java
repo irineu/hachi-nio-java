@@ -21,6 +21,7 @@ public class Main {
                 @Override
                 public void onDisconnect(HachiNIOConnection connection) {
                     System.out.println("on disconnect");
+                    System.out.println(connection.isActive());
                 }
 
                 @Override

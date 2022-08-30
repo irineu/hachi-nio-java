@@ -11,8 +11,11 @@ import java.util.Map;
 
 public class MainClient {
 
+    static HachiNIOClient client;
+
     public static void main(String[] args) {
-        HachiNIOClient client = new HachiNIOClient("127.0.0.1", 3575, new HachiNIOHandler(){
+
+        client = new HachiNIOClient("127.0.0.1", 3575, new HachiNIOHandler(){
 
             @Override
             public void onConnect(HachiNIOConnection connection) {
@@ -30,6 +33,7 @@ public class MainClient {
             @Override
             public void onDisconnect(HachiNIOConnection connection) {
                 System.out.println("on disconnect");
+                System.out.println(connection.isActive());
             }
 
             @Override

@@ -5,6 +5,7 @@ import com.irineuantunes.hachinio.network.HachiNIOConnection;
 import com.irineuantunes.hachinio.network.handlers.protocol.NIOProtocolReader;
 
 import java.io.IOException;
+import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
@@ -24,6 +25,7 @@ public class ClientReadCompletionHandler implements CompletionHandler<Integer, A
         if(result == -1){
             try {
                 channel.close();
+                this.hachiNIOClient.stop();
                 this.hachiNIOClient.getHandler().onDisconnect(connection);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -41,7 +43,9 @@ public class ClientReadCompletionHandler implements CompletionHandler<Integer, A
     }
 
     @Override
-    public void failed(Throwable throwable, AsynchronousSocketChannel asynchronousSocketChannel) {
-
+    public void failed(Throwable exc, AsynchronousSocketChannel asynchronousSocketChannel) {
+        if(!(exc instanceof AsynchronousCloseException)){
+            exc.printStackTrace();
+        }
     }
 }

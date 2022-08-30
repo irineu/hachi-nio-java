@@ -66,7 +66,7 @@ public class HachiNIOClient implements HachiNIO {
 
     @Override
     public boolean isActive() {
-        return this.isAlive;
+        return this.connection.isActive();
     }
 
     @Override

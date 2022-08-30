@@ -22,7 +22,6 @@ public class ClientWriteCompletionHandler implements CompletionHandler<Integer, 
     @Override
     public void failed(Throwable exc, AsynchronousSocketChannel asynchronousSocketChannel) {
         if(!(exc instanceof AsynchronousCloseException)){
-            System.out.println( "fail to read message from client");
             exc.printStackTrace();
         }
     }

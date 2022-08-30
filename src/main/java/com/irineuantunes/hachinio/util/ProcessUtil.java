@@ -1,7 +1,6 @@
 package com.irineuantunes.hachinio.util;
 
 import com.irineuantunes.hachinio.HachiNIO;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,19 +38,15 @@ class LivingThread extends Thread{
         while(serversAndClients.size() > 0) {
             try {
                 Thread.sleep(1 * 1000);
-                //System.out.println("tick " + serversAndClients.size());
                 for (int i = 0; i < serversAndClients.size(); i++) {
                     if (!serversAndClients.get(i).isActive()) {
                         serversAndClients.remove(i);
                         break;
                     }
                 }
-
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
-        System.out.println("no more active stuff");
     }
 }

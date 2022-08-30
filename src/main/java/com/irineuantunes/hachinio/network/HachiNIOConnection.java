@@ -110,6 +110,10 @@ public class HachiNIOConnection {
         this.getMessageOutputStream().reset();
     }
 
+    public boolean isActive(){
+        return this.socketChannel.isOpen();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
