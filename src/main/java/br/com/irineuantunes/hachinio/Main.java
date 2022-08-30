@@ -1,6 +1,7 @@
 package br.com.irineuantunes.hachinio;
 
 import br.com.irineuantunes.hachinio.network.handlers.HachiNIOHandler;
+import br.com.irineuantunes.hachinio.network.handlers.HachiNIOServerHandler;
 import br.com.irineuantunes.hachinio.util.ByteUtil;
 import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
 
@@ -12,7 +13,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            HachiNIOServer server = new HachiNIOServer("127.0.0.1", 3575, new HachiNIOHandler() {
+            HachiNIOServer server = new HachiNIOServer("127.0.0.1", 3575, new HachiNIOServerHandler() {
                 @Override
                 public void onConnect(HachiNIOConnection connection) {
                     System.out.println("on connect");
@@ -69,7 +70,7 @@ public class Main {
 //            }).start();
 
 
-            HachiNIOServer server2 = new HachiNIOServer("127.0.0.1", 3575, new HachiNIOHandler() {
+            HachiNIOServer server2 = new HachiNIOServer("127.0.0.1", 3575, new HachiNIOServerHandler() {
                 @Override
                 public void onConnect(HachiNIOConnection connection) {
                     System.out.println("on connect");

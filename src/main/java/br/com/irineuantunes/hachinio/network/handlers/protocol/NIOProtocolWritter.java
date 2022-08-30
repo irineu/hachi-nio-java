@@ -38,7 +38,7 @@ public class NIOProtocolWritter {
         buf.put(byteArrayOutputStream.toByteArray());
         buf.flip();
 
-        connection.getChannel().write(buf, connection.getChannel(), connection.getWriteCompletionHandler());
+        connection.getSocketChannel().write(buf, connection.getSocketChannel(), connection.getWriteCompletionHandler());
     }
 
     public static void write(Map header, String data, HachiNIOConnection connection, HachiNIOServer hachiNIOServer) throws IOException {

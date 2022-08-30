@@ -1,6 +1,6 @@
 package br.com.irineuantunes.hachinio;
 
-import br.com.irineuantunes.hachinio.network.handlers.HachiNIOHandler;
+import br.com.irineuantunes.hachinio.network.handlers.HachiNIOServerHandler;
 import br.com.irineuantunes.hachinio.network.handlers.ServerReadCompletionHandler;
 import br.com.irineuantunes.hachinio.network.handlers.ServerWriteCompletionHandler;
 import br.com.irineuantunes.hachinio.network.HachiNIOConnection;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class HachiNIOServer implements HachiNIO {
 
     private Map<AsynchronousSocketChannel, HachiNIOConnection> connectionMap;
-    private HachiNIOHandler handler;
+    private HachiNIOServerHandler handler;
     private String bindAddr;
     private Integer bindPort;
     private Boolean listening;
@@ -36,15 +36,15 @@ public class HachiNIOServer implements HachiNIO {
         return connectionMap;
     }
 
-    public HachiNIOHandler getHandler() {
+    public HachiNIOServerHandler getHandler() {
         return handler;
     }
 
-    public void setHandler(HachiNIOHandler handler) {
+    public void setHandler(HachiNIOServerHandler handler) {
         this.handler = handler;
     }
 
-    public HachiNIOServer(String bindAddr, int bindPort, HachiNIOHandler hanler){
+    public HachiNIOServer(String bindAddr, int bindPort, HachiNIOServerHandler hanler){
         this.bindAddr = bindAddr;
         this.bindPort = bindPort;
         this.handler = hanler;
