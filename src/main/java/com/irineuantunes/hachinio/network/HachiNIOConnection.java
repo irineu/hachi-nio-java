@@ -1,6 +1,6 @@
 package com.irineuantunes.hachinio.network;
 
-import com.irineuantunes.hachinio.network.handlers.protocol.NIOProtocolWritter;
+import com.irineuantunes.hachinio.network.handlers.protocol.ProtocolWritter;
 import com.irineuantunes.hachinio.util.ByteUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class HachiNIOConnection {
 
-    private AsynchronousSocketChannel socketChannel;
+    protected AsynchronousSocketChannel socketChannel;
 
     private ByteBuffer socketByteBuffer;
     private CompletionHandler<Integer, AsynchronousSocketChannel> readCompleteHandler;
@@ -39,7 +39,7 @@ public class HachiNIOConnection {
 
     public void send(Map header, byte message[]) throws IOException {
         System.out.println("sent");
-        NIOProtocolWritter.write(header, message, this, null);
+        ProtocolWritter.write(header, message, this);
     }
 
     public ByteArrayOutputStream getHeaderOutputStream() {

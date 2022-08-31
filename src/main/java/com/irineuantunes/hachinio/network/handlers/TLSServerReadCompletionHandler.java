@@ -2,7 +2,9 @@ package com.irineuantunes.hachinio.network.handlers;
 
 import com.irineuantunes.hachinio.HachiNIOServer;
 import com.irineuantunes.hachinio.network.HachiNIOTLSConnection;
-import com.irineuantunes.hachinio.util.ByteUtil;
+import com.irineuantunes.hachinio.network.handlers.protocol.ProtocolReader;
+import com.irineuantunes.hachinio.util.SSLUtil;
+
 
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
@@ -26,18 +28,7 @@ public class TLSServerReadCompletionHandler implements CompletionHandler<Integer
     @Override
     public void completed(Integer readResult, AsynchronousSocketChannel channel) {
         HachiNIOTLSConnection connection = (HachiNIOTLSConnection) hachiNIOServer.getConnectionMap().get(channel);
-
-        int appBufferSize = connection.getEngine().getSession().getApplicationBufferSize();
-
-        ByteBuffer myAppData = ByteBuffer.allocate(appBufferSize);
-        ByteBuffer peerAppData = ByteBuffer.allocate(appBufferSize);
-
-        //myNetData.clear();
-        //peerNetData.clear();
-
         doSSLCyle(readResult, connection);
-
-        //connection.getRawSocketByteBufferMap().flip();
     }
 
     private void doSSLCyle(Integer readResult, HachiNIOTLSConnection connection) {
@@ -83,7 +74,9 @@ public class TLSServerReadCompletionHandler implements CompletionHandler<Integer
             switch(result.getStatus()){
                 case OK:
                     System.out.println("unwrap OK");
-                    System.out.println(ByteUtil.bytesToHex(connection.getSocketByteBuffer().array()));
+                    // System.out.println(ByteUtil.bytesToHex(connection.getSocketByteBuffer().array()));
+                    ProtocolReader.read(connection, hachiNIOServer);
+                    connection.getSocketByteBuffer().clear();
                     this.readNext(connection);
                     break;
                 case BUFFER_UNDERFLOW:
@@ -101,7 +94,6 @@ public class TLSServerReadCompletionHandler implements CompletionHandler<Integer
             connection.getEngine().closeOutbound();
             doSSLCyle(readResult, connection);
         }
-
     }
 
     private void handshakeUnwrap(Integer readResult, HachiNIOTLSConnection connection) {
@@ -159,7 +151,7 @@ public class TLSServerReadCompletionHandler implements CompletionHandler<Integer
         if (connection.getEngine().getSession().getPacketBufferSize() < connection.getRawReadSocketByteBuffer().limit()) {
             System.out.println("read more");
         } else {
-            ByteBuffer replaceBuffer = enlargePacketBuffer(connection);
+            ByteBuffer replaceBuffer = SSLUtil.enlargePacketBuffer(connection, connection.getRawReadSocketByteBuffer());
             connection.getRawReadSocketByteBuffer().flip();
             replaceBuffer.put(connection.getRawReadSocketByteBuffer());
             connection.setRawReadSocketByteBuffer(replaceBuffer);
@@ -175,19 +167,6 @@ public class TLSServerReadCompletionHandler implements CompletionHandler<Integer
                 connection.getSocketChannel(),
                 connection.getReadCompleteHandler()
         );
-    }
-
-    protected ByteBuffer enlargePacketBuffer(HachiNIOTLSConnection connection) {
-        return enlargeBuffer(connection.getRawReadSocketByteBuffer(), connection.getEngine().getSession().getPacketBufferSize());
-    }
-
-    protected ByteBuffer enlargeBuffer(ByteBuffer buffer, int sessionProposedCapacity) {
-        if (sessionProposedCapacity > buffer.capacity()) {
-            buffer = ByteBuffer.allocate(sessionProposedCapacity);
-        } else {
-            buffer = ByteBuffer.allocate(buffer.capacity() * 2);
-        }
-        return buffer;
     }
 
     private void wrap(Integer readResult, HachiNIOTLSConnection connection) {
@@ -229,8 +208,6 @@ public class TLSServerReadCompletionHandler implements CompletionHandler<Integer
             connection.getEngine().closeOutbound();
             doSSLCyle(readResult, connection);
         }
-
-
     }
 
     private void task(Integer readResult,HachiNIOTLSConnection connection){

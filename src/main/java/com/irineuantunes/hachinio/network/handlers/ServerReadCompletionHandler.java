@@ -1,7 +1,7 @@
 package com.irineuantunes.hachinio.network.handlers;
 
 import com.irineuantunes.hachinio.HachiNIOServer;
-import com.irineuantunes.hachinio.network.handlers.protocol.NIOProtocolReader;
+import com.irineuantunes.hachinio.network.handlers.protocol.ProtocolReader;
 import com.irineuantunes.hachinio.network.HachiNIOConnection;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class ServerReadCompletionHandler implements CompletionHandler<Integer, A
             return;
         }
 
-        NIOProtocolReader.read(connection, hachiNIOServer);
+        ProtocolReader.read(connection, hachiNIOServer);
 
         //clear buff
         connection.getSocketByteBuffer().clear();

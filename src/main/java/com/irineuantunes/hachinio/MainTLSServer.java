@@ -6,6 +6,7 @@ import com.irineuantunes.hachinio.util.ByteUtil;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -46,8 +47,10 @@ public class MainTLSServer {
             public void onMessage(HachiNIOConnection connection, Map header, byte[] message) {
                 System.out.println(header.get("transaction"));
                 System.out.println(ByteUtil.bytesToHex(message));
+                System.out.println(new String(message));
+
                 try {
-                    connection.send(header, message);
+                    connection.send(header, "ok".getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

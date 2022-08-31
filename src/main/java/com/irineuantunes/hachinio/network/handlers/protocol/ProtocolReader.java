@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Map;
 
-public class NIOProtocolReader {
+public class ProtocolReader {
     public static void read(HachiNIOConnection connection, HachiNIO hachiNIO) {
         try {
             byte arr [] = connection.getSocketByteBuffer().array();

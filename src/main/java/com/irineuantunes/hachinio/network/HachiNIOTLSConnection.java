@@ -1,9 +1,16 @@
 package com.irineuantunes.hachinio.network;
 
+import com.irineuantunes.hachinio.network.handlers.protocol.ProtocolWritter;
+import com.irineuantunes.hachinio.util.SSLUtil;
+
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLEngineResult;
+import javax.net.ssl.SSLException;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.Map;
 
 public class HachiNIOTLSConnection extends HachiNIOConnection{
 
@@ -40,5 +47,39 @@ public class HachiNIOTLSConnection extends HachiNIOConnection{
 
     public void setRawReadSocketByteBuffer(ByteBuffer replaceBuffer) {
         this.rawReadSocketByteBuffer = replaceBuffer;
+    }
+
+    @Override
+    public void send(Map header, byte[] message) throws IOException {
+
+        System.out.println("will reply");
+        this.rawWriteSocketByteBuffer.clear();
+        sslWriteFlow(ProtocolWritter.parseProtocol(header,message));
+    }
+
+    private void sslWriteFlow(ByteBuffer outByteBuffer) throws SSLException {
+        SSLEngineResult result = engine.wrap(outByteBuffer, this.rawWriteSocketByteBuffer);
+
+        switch (result.getStatus()) {
+            case OK:
+                System.out.println("reply:");
+                this.rawWriteSocketByteBuffer.flip();
+                getSocketChannel().write(this.rawWriteSocketByteBuffer);
+                break;
+            case BUFFER_OVERFLOW:
+                System.out.println("reply overflow");
+                SSLUtil.enlargePacketBuffer(this, this.rawWriteSocketByteBuffer);
+                //now retry
+                sslWriteFlow(outByteBuffer);
+                break;
+            case BUFFER_UNDERFLOW:
+                throw new SSLException("Buffer underflow occured after a wrap. impossible situation.");
+            case CLOSED:
+                //TODO
+                System.out.println("TODO closed");
+                break;
+            default:
+                throw new IllegalStateException("Invalid SSL status: " + result.getStatus());
+        }
     }
 }

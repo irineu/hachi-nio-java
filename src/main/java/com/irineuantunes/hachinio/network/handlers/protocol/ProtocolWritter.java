@@ -1,6 +1,5 @@
 package com.irineuantunes.hachinio.network.handlers.protocol;
 
-import com.irineuantunes.hachinio.HachiNIOServer;
 import com.irineuantunes.hachinio.network.HachiNIOConnection;
 import com.google.gson.Gson;
 
@@ -11,10 +10,9 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class NIOProtocolWritter {
+public class ProtocolWritter {
 
-    public static void write(Map header, byte data[], HachiNIOConnection connection, HachiNIOServer hachiNIOServer) throws IOException {
-
+    public static ByteBuffer parseProtocol(Map header, byte data[]) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         String strHeader = new Gson().toJson(header);
@@ -38,10 +36,14 @@ public class NIOProtocolWritter {
         buf.put(byteArrayOutputStream.toByteArray());
         buf.flip();
 
-        connection.getSocketChannel().write(buf, connection.getSocketChannel(), connection.getWriteCompletionHandler());
+        return buf;
     }
 
-    public static void write(Map header, String data, HachiNIOConnection connection, HachiNIOServer hachiNIOServer) throws IOException {
-        NIOProtocolWritter.write(header, data.getBytes(StandardCharsets.UTF_8), connection, hachiNIOServer);
+    public static void write(Map header, byte data[], HachiNIOConnection connection) throws IOException {
+        connection.getSocketChannel().write(parseProtocol(header, data), connection.getSocketChannel(), connection.getWriteCompletionHandler());
+    }
+
+    public static void write(Map header, String data, HachiNIOConnection connection) throws IOException {
+        ProtocolWritter.write(header, data.getBytes(StandardCharsets.UTF_8), connection);
     }
 }
