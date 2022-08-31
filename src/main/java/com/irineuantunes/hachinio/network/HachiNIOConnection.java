@@ -1,7 +1,5 @@
 package com.irineuantunes.hachinio.network;
 
-import com.irineuantunes.hachinio.network.handlers.ServerReadCompletionHandler;
-import com.irineuantunes.hachinio.network.handlers.ServerWriteCompletionHandler;
 import com.irineuantunes.hachinio.network.handlers.protocol.NIOProtocolWritter;
 import com.irineuantunes.hachinio.util.ByteUtil;
 
@@ -25,11 +23,13 @@ public class HachiNIOConnection {
     private int messageLength = -1;
     private int headerLength = -1;
 
-    public HachiNIOConnection(ByteBuffer socketByteBufferMap, CompletionHandler<Integer, AsynchronousSocketChannel> readCompleteHandlerMap, CompletionHandler<Integer, AsynchronousSocketChannel> writeCompletionHandler, AsynchronousSocketChannel channel) {
+    public HachiNIOConnection(ByteBuffer socketByteBuffer,
+                              CompletionHandler<Integer, AsynchronousSocketChannel> readCompleteHandler,
+                              CompletionHandler<Integer, AsynchronousSocketChannel> writeCompletionHandler,
+                              AsynchronousSocketChannel channel) {
         this.socketChannel = channel;
-
-        this.socketByteBuffer = socketByteBufferMap;
-        this.readCompleteHandler = readCompleteHandlerMap;
+        this.socketByteBuffer = socketByteBuffer;
+        this.readCompleteHandler = readCompleteHandler;
         this.writeCompletionHandler = writeCompletionHandler;
     }
 
@@ -42,21 +42,12 @@ public class HachiNIOConnection {
         NIOProtocolWritter.write(header, message, this, null);
     }
 
-
     public ByteArrayOutputStream getHeaderOutputStream() {
         return headerOutputStream;
     }
 
-    public void setHeaderOutputStream(ByteArrayOutputStream headerOutputStream) {
-        this.headerOutputStream = headerOutputStream;
-    }
-
     public ByteArrayOutputStream getMessageOutputStream() {
         return messageOutputStream;
-    }
-
-    public void setMessageOutputStream(ByteArrayOutputStream messageOutputStream) {
-        this.messageOutputStream = messageOutputStream;
     }
 
     public ByteBuffer getSocketByteBuffer() {
@@ -71,20 +62,12 @@ public class HachiNIOConnection {
         return readCompleteHandler;
     }
 
-    public void setReadCompleteHandler(ServerReadCompletionHandler readCompleteHandler) {
-        this.readCompleteHandler = readCompleteHandler;
-    }
-
     public int getMessageLength() {
         return messageLength;
     }
 
     public CompletionHandler<Integer, AsynchronousSocketChannel> getWriteCompletionHandler() {
         return writeCompletionHandler;
-    }
-
-    public void setWriteCompletionHandler(ServerWriteCompletionHandler writeCompletionHandler) {
-        this.writeCompletionHandler = writeCompletionHandler;
     }
 
     public void setMessageLength(int messageLength) {

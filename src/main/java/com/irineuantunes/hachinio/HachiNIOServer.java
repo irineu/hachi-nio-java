@@ -17,12 +17,12 @@ import java.util.Map;
 
 public class HachiNIOServer implements HachiNIO {
 
-    private Map<AsynchronousSocketChannel, HachiNIOConnection> connectionMap;
-    private HachiNIOServerHandler handler;
-    private String bindAddr;
-    private Integer bindPort;
-    private Boolean listening;
-    private AsynchronousServerSocketChannel serverSockChannel;
+    protected Map<AsynchronousSocketChannel, HachiNIOConnection> connectionMap;
+    protected HachiNIOServerHandler handler;
+    protected String bindAddr;
+    protected Integer bindPort;
+    protected Boolean listening;
+    protected AsynchronousServerSocketChannel serverSockChannel;
 
     public Boolean isListening() {
         return listening;

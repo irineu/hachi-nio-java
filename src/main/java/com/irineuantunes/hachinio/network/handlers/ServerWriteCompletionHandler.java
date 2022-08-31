@@ -6,7 +6,7 @@ import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
-public class ServerWriteCompletionHandler  implements CompletionHandler<Integer, AsynchronousSocketChannel> {
+public class ServerWriteCompletionHandler implements CompletionHandler<Integer, AsynchronousSocketChannel> {
 
     private HachiNIOServer hachiNIOServer;
 

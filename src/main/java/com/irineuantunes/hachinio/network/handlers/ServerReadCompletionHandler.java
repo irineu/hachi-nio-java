@@ -18,7 +18,7 @@ public class ServerReadCompletionHandler implements CompletionHandler<Integer, A
     }
 
     @Override
-    public void completed(Integer result, AsynchronousSocketChannel channel  ) {
+    public void completed(Integer result, AsynchronousSocketChannel channel) {
         HachiNIOConnection connection = hachiNIOServer.getConnectionMap().get(channel);
         connection.getSocketByteBuffer().flip();
 
