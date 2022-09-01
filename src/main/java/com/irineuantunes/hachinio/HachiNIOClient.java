@@ -14,12 +14,12 @@ import java.nio.channels.CompletionHandler;
 
 public class HachiNIOClient implements HachiNIO {
 
-    private String srvAddr;
-    private int srvPort;
-    private HachiNIOHandler handler;
-    private AsynchronousSocketChannel sockChannel;
-    private HachiNIOConnection connection;
-    private boolean isAlive = false;
+    protected String srvAddr;
+    protected int srvPort;
+    protected HachiNIOHandler handler;
+    protected AsynchronousSocketChannel sockChannel;
+    protected HachiNIOConnection connection;
+    protected boolean isAlive = false;
 
     public HachiNIOClient(String srvAddr, int srvPort, HachiNIOHandler handler){
         this.srvAddr = srvAddr;
@@ -47,6 +47,7 @@ public class HachiNIOClient implements HachiNIO {
 
             @Override
             public void failed(Throwable ex, AsynchronousSocketChannel asynchronousSocketChannel) {
+                System.out.println("err");
                 handler.onClientError(ex, connection);
                 isAlive = false;
             }
@@ -66,7 +67,7 @@ public class HachiNIOClient implements HachiNIO {
 
     @Override
     public boolean isActive() {
-        return this.connection.isActive();
+        return this.isAlive;//this.connection.isActive();
     }
 
     @Override
