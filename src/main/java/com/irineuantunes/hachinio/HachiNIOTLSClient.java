@@ -19,6 +19,7 @@ import java.security.cert.CertificateException;
 public class HachiNIOTLSClient extends HachiNIOClient{
 
     private SSLContext context;
+    private boolean handshaked = false;
 
     public HachiNIOTLSClient(String srvAddr, int srvPort, HachiNIOHandler handler) throws NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException, KeyManagementException {
         super(srvAddr, srvPort, handler);
@@ -68,9 +69,9 @@ public class HachiNIOTLSClient extends HachiNIOClient{
                 );
 
                 //TODO chamar o sslcycle no getReadCompleteHandler do cliente para disparar o hadshake
-
+                ((TLSClientReadCompletionHandler)connection.getReadCompleteHandler()).handshake();
                 //TODO for after handshake
-                handler.onConnect(connection);
+                //handler.onConnect(connection);
             }
 
             @Override
@@ -84,6 +85,14 @@ public class HachiNIOTLSClient extends HachiNIOClient{
         this.isAlive = true;
         ProcessUtil.attach(this);
         System.out.println(this.isAlive);
+    }
+
+    public boolean isHandshaked() {
+        return handshaked;
+    }
+
+    public void setHandshaked(boolean handshaked) {
+        this.handshaked = handshaked;
     }
 
     protected KeyManager[] createKeyManagers(String filepath, String keystorePassword, String keyPassword) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {

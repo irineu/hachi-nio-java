@@ -24,14 +24,14 @@ public class MainTLSClient {
             @Override
             public void onConnect(HachiNIOConnection connection) {
                 System.out.println("on connect");
-//                Map m = new HashMap();
-//                m.put("transaction", "123");
-//
-//                try {
-//                    connection.send(m, "hello".getBytes(StandardCharsets.UTF_8));
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
+                Map m = new HashMap();
+                m.put("transaction", "123");
+
+                try {
+                    connection.send(m, "hello".getBytes(StandardCharsets.UTF_8));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override

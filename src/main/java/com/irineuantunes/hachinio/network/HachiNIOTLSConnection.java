@@ -51,8 +51,6 @@ public class HachiNIOTLSConnection extends HachiNIOConnection{
 
     @Override
     public void send(Map header, byte[] message) throws IOException {
-
-        System.out.println("will reply");
         this.rawWriteSocketByteBuffer.clear();
         sslWriteFlow(ProtocolWritter.parseProtocol(header,message));
     }
@@ -62,7 +60,6 @@ public class HachiNIOTLSConnection extends HachiNIOConnection{
 
         switch (result.getStatus()) {
             case OK:
-                System.out.println("reply:");
                 this.rawWriteSocketByteBuffer.flip();
                 getSocketChannel().write(this.rawWriteSocketByteBuffer);
                 break;
