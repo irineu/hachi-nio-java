@@ -15,7 +15,7 @@ import java.nio.channels.CompletionHandler;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class TLSServerReadCompletionHandler extends TLSReadCompletionHandler implements CompletionHandler<Integer, AsynchronousSocketChannel> {
+public class TLSServerReadCompletionHandler extends TLSReadCompletionHandler {
 
     HachiNIOServer hachiNIOServer;
 
@@ -28,14 +28,6 @@ public class TLSServerReadCompletionHandler extends TLSReadCompletionHandler imp
     public void completed(Integer readResult, AsynchronousSocketChannel channel) {
         HachiNIOTLSConnection connection = (HachiNIOTLSConnection) hachiNIOServer.getConnectionMap().get(channel);
         doSSLCyle(readResult, connection);
-    }
-
-    protected void readNext(HachiNIOTLSConnection connection) {
-        connection.getSocketChannel().read(
-                connection.getRawReadSocketByteBuffer(),
-                connection.getSocketChannel(),
-                connection.getReadCompleteHandler()
-        );
     }
 
     protected void unwrapMessage(Integer readResult, HachiNIOTLSConnection connection) {

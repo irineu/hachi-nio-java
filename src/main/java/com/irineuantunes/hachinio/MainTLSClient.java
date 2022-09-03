@@ -19,7 +19,7 @@ public class MainTLSClient {
 
     public static void main(String[] args) throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, KeyManagementException {
 
-        client = new HachiNIOTLSClient("127.0.0.1", 7890, new HachiNIOHandler(){
+        client = new HachiNIOTLSClient("127.0.0.1", 3575, new HachiNIOHandler(){
 
             @Override
             public void onConnect(HachiNIOConnection connection) {

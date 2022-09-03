@@ -27,8 +27,8 @@ public class HachiNIOTLSServer extends HachiNIOServer{
 
         context = SSLContext.getInstance("TLSv1.2");
 
-        context.init(createKeyManagers("/Users/t736609/Desktop/projects/CPP/FraudDetector/relay-mtls/crt-03/cert.jks", "123456", "123456"),
-                createTrustManagers("/Users/t736609/Desktop/projects/CPP/FraudDetector/relay-mtls/crt-03/trustedCerts.jks", "123456"),
+        context.init(createKeyManagers("/Users/irineuantunes/Downloads/crt-03/cert.jks", "123456", "123456"),
+                createTrustManagers("/Users/irineuantunes/Downloads/crt-03/trustedCerts.jks", "123456"),
                 new SecureRandom()
         );
     }

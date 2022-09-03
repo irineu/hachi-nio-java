@@ -1,24 +1,24 @@
 package com.irineuantunes.hachinio.network.handlers;
 
+import com.irineuantunes.hachinio.HachiNIO;
 import com.irineuantunes.hachinio.HachiNIOClient;
 import com.irineuantunes.hachinio.HachiNIOTLSClient;
 import com.irineuantunes.hachinio.network.HachiNIOTLSConnection;
-import com.irineuantunes.hachinio.network.handlers.protocol.ProtocolReader;
 import com.irineuantunes.hachinio.util.SSLUtil;
 
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLException;
-import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.channels.ReadPendingException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public abstract class TLSReadCompletionHandler {
+public abstract class TLSReadCompletionHandler  implements CompletionHandler<Integer, AsynchronousSocketChannel> {
 
-    protected HachiNIOClient hachiNIOClient;
+    protected HachiNIO hachiNIO;
     protected ExecutorService executor = Executors.newSingleThreadExecutor();
-
-    protected abstract void readNext(HachiNIOTLSConnection connection);
     protected abstract void unwrapMessage(Integer readResult, HachiNIOTLSConnection connection);
 
     protected void doSSLCyle(Integer readResult, HachiNIOTLSConnection connection) {
@@ -41,11 +41,12 @@ public abstract class TLSReadCompletionHandler {
         }else if(handshakeStatus != SSLEngineResult.HandshakeStatus.FINISHED){
             this.unwrapMessage(readResult, connection);
 
-            if(!((HachiNIOTLSClient)this.hachiNIOClient).isHandshaked()){
-                ((HachiNIOTLSClient)this.hachiNIOClient).setHandshaked(true);
-                this.hachiNIOClient.getHandler().onConnect(this.hachiNIOClient.getConnection());
+            if(this.hachiNIO instanceof HachiNIOClient) {
+                if (!((HachiNIOTLSClient) this.hachiNIO).isHandshaked()) {
+                    ((HachiNIOTLSClient) this.hachiNIO).setHandshaked(true);
+                    this.hachiNIO.getHandler().onConnect(((HachiNIOClient)hachiNIO).getConnection());
+                }
             }
-
         }
     }
 
@@ -162,6 +163,18 @@ public abstract class TLSReadCompletionHandler {
             executor.execute(task);
         }
         doSSLCyle(readResult, connection);
+    }
+    protected void readNext(HachiNIOTLSConnection connection) {
+        try{
+            connection.getSocketChannel().read(
+                    connection.getRawReadSocketByteBuffer(),
+                    connection.getSocketChannel(),
+                    connection.getReadCompleteHandler()
+            );
+        }catch (ReadPendingException rpe){
+            //TODO do nothing
+        }
+
     }
 
 }
