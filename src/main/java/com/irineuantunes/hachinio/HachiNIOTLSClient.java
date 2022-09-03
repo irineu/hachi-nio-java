@@ -72,6 +72,7 @@ public class HachiNIOTLSClient extends HachiNIOClient{
                 ((TLSClientReadCompletionHandler)connection.getReadCompleteHandler()).handshake();
                 //TODO for after handshake
                 //handler.onConnect(connection);
+
             }
 
             @Override
