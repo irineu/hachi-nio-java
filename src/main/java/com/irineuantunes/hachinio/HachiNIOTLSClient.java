@@ -15,6 +15,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 public class HachiNIOTLSClient extends HachiNIOClient{
 
@@ -25,11 +26,7 @@ public class HachiNIOTLSClient extends HachiNIOClient{
         super(srvAddr, srvPort, handler);
 
         context = SSLContext.getInstance("TLSv1.2");
-
-        context.init(createKeyManagers("/Users/irineuantunes/Downloads/crt-03/cert.jks", "123456", "123456"),
-                createTrustManagers("/Users/irineuantunes/Downloads/crt-03/trustedCerts.jks", "123456"),
-                new SecureRandom()
-        );
+        context.init(null, trustAllCerts, new SecureRandom());
     }
 
     public void connect() throws IOException {
@@ -52,7 +49,7 @@ public class HachiNIOTLSClient extends HachiNIOClient{
                         clientSocketChannel
                 );
 
-                SSLEngine engine = context.createSSLEngine();
+                SSLEngine engine = context.createSSLEngine(srvAddr, srvPort);
                 engine.setUseClientMode(true);
                 ((HachiNIOTLSConnection)connection).setSSLEngine(engine);
 
@@ -111,19 +108,13 @@ public class HachiNIOTLSClient extends HachiNIOClient{
         return kmf.getKeyManagers();
     }
 
-    protected TrustManager[] createTrustManagers(String filepath, String keystorePassword) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        KeyStore trustStore = KeyStore.getInstance("JKS");
-        InputStream trustStoreIS = new FileInputStream(filepath);
-        try {
-            trustStore.load(trustStoreIS, keystorePassword.toCharArray());
-        } finally {
-            if (trustStoreIS != null) {
-                trustStoreIS.close();
-            }
-        }
-        TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustFactory.init(trustStore);
-        return trustFactory.getTrustManagers();
-    }
+    TrustManager[] trustAllCerts = new TrustManager[] {
+            new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+            }};
 
 }
