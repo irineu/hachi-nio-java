@@ -1,25 +1,22 @@
-package com.irineuantunes.hachinio;
+package com.irineuantunes.hachinio.test.samples;
 
 import com.google.gson.Gson;
+import com.irineuantunes.hachinio.HachiNIOClient;
 import com.irineuantunes.hachinio.network.HachiNIOConnection;
 import com.irineuantunes.hachinio.network.handlers.HachiNIOHandler;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainTLSClient {
-    static HachiNIOTLSClient client;
+public class MainClient {
 
-    public static void main(String[] args) throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, KeyManagementException {
+    static HachiNIOClient client;
 
-        client = new HachiNIOTLSClient("127.0.0.1", 3575, new HachiNIOHandler(){
+    public static void main(String[] args) {
+
+        client = new HachiNIOClient("127.0.0.1", 3575, new HachiNIOHandler(){
 
             @Override
             public void onConnect(HachiNIOConnection connection) {
@@ -42,7 +39,7 @@ public class MainTLSClient {
 
             @Override
             public void onClientError(Throwable ex, HachiNIOConnection connection) {
-                ex.printStackTrace();
+
             }
 
             @Override

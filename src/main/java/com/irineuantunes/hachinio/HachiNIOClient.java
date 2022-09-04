@@ -13,7 +13,6 @@ import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
 public class HachiNIOClient implements HachiNIO {
-
     protected String srvAddr;
     protected int srvPort;
     protected HachiNIOHandler handler;

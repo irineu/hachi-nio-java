@@ -1,23 +1,32 @@
-package com.irineuantunes.hachinio;
+package com.irineuantunes.hachinio.test.samples;
 
+import com.irineuantunes.hachinio.HachiNIOTLSServer;
 import com.irineuantunes.hachinio.network.HachiNIOConnection;
 import com.irineuantunes.hachinio.network.handlers.HachiNIOServerHandler;
 import com.irineuantunes.hachinio.util.ByteUtil;
 
+import javax.net.ssl.*;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Map;
 
 public class MainTLSServer {
     public static void main(String[] args) throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, KeyManagementException, InterruptedException {
 
-        HachiNIOTLSServer server = new HachiNIOTLSServer("127.0.0.1", 3575, new HachiNIOServerHandler() {
+        SSLContext context;
+
+        context = SSLContext.getInstance("TLSv1.2");
+
+        context.init(createKeyManagers("/Users/irineuantunes/Downloads/crt-03/cert.jks", "123456", "123456"),
+                createTrustManagers("/Users/irineuantunes/Downloads/crt-03/trustedCerts.jks", "123456"),
+                new SecureRandom()
+        );
+        HachiNIOTLSServer server = new HachiNIOTLSServer("127.0.0.1", 3575,context, new HachiNIOServerHandler() {
             @Override
             public void onConnect(HachiNIOConnection connection) {
                 System.out.println("on connect");
@@ -63,5 +72,35 @@ public class MainTLSServer {
         });
 
         server.listen();
+    }
+
+    protected static KeyManager[] createKeyManagers(String filepath, String keystorePassword, String keyPassword) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        InputStream keyStoreIS = new FileInputStream(filepath);
+        try {
+            keyStore.load(keyStoreIS, keystorePassword.toCharArray());
+        } finally {
+            if (keyStoreIS != null) {
+                keyStoreIS.close();
+            }
+        }
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        kmf.init(keyStore, keyPassword.toCharArray());
+        return kmf.getKeyManagers();
+    }
+
+    protected static TrustManager[] createTrustManagers(String filepath, String keystorePassword) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
+        KeyStore trustStore = KeyStore.getInstance("JKS");
+        InputStream trustStoreIS = new FileInputStream(filepath);
+        try {
+            trustStore.load(trustStoreIS, keystorePassword.toCharArray());
+        } finally {
+            if (trustStoreIS != null) {
+                trustStoreIS.close();
+            }
+        }
+        TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustFactory.init(trustStore);
+        return trustFactory.getTrustManagers();
     }
 }

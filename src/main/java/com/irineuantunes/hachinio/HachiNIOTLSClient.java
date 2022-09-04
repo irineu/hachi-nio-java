@@ -22,11 +22,10 @@ public class HachiNIOTLSClient extends HachiNIOClient{
     private SSLContext context;
     private boolean handshaked = false;
 
-    public HachiNIOTLSClient(String srvAddr, int srvPort, HachiNIOHandler handler) throws NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException, KeyManagementException {
+    public HachiNIOTLSClient(String srvAddr, int srvPort, SSLContext context, HachiNIOHandler handler) throws NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException, KeyManagementException {
         super(srvAddr, srvPort, handler);
 
-        context = SSLContext.getInstance("TLSv1.2");
-        context.init(null, trustAllCerts, new SecureRandom());
+        this.context = context;
     }
 
     public void connect() throws IOException {
@@ -92,29 +91,4 @@ public class HachiNIOTLSClient extends HachiNIOClient{
     public void setHandshaked(boolean handshaked) {
         this.handshaked = handshaked;
     }
-
-    protected KeyManager[] createKeyManagers(String filepath, String keystorePassword, String keyPassword) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        KeyStore keyStore = KeyStore.getInstance("JKS");
-        InputStream keyStoreIS = new FileInputStream(filepath);
-        try {
-            keyStore.load(keyStoreIS, keystorePassword.toCharArray());
-        } finally {
-            if (keyStoreIS != null) {
-                keyStoreIS.close();
-            }
-        }
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        kmf.init(keyStore, keyPassword.toCharArray());
-        return kmf.getKeyManagers();
-    }
-
-    TrustManager[] trustAllCerts = new TrustManager[] {
-            new X509TrustManager() {
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-            }};
-
 }

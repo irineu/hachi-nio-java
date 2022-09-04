@@ -1,5 +1,6 @@
-package com.irineuantunes.hachinio;
+package com.irineuantunes.hachinio.test.samples;
 
+import com.irineuantunes.hachinio.HachiNIOServer;
 import com.irineuantunes.hachinio.network.handlers.HachiNIOServerHandler;
 import com.irineuantunes.hachinio.util.ByteUtil;
 import com.irineuantunes.hachinio.network.HachiNIOConnection;

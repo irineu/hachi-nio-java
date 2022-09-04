@@ -22,45 +22,9 @@ public class HachiNIOTLSServer extends HachiNIOServer{
 
     private SSLContext context;
 
-    public HachiNIOTLSServer(String bindAddr, int bindPort, HachiNIOServerHandler hanler) throws NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException, KeyManagementException {
+    public HachiNIOTLSServer(String bindAddr, int bindPort, SSLContext context, HachiNIOServerHandler hanler) throws NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException, KeyManagementException {
         super(bindAddr, bindPort, hanler);
-
-        context = SSLContext.getInstance("TLSv1.2");
-
-        context.init(createKeyManagers("/Users/irineuantunes/Downloads/crt-03/cert.jks", "123456", "123456"),
-                createTrustManagers("/Users/irineuantunes/Downloads/crt-03/trustedCerts.jks", "123456"),
-                new SecureRandom()
-        );
-    }
-
-    protected KeyManager[] createKeyManagers(String filepath, String keystorePassword, String keyPassword) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
-        KeyStore keyStore = KeyStore.getInstance("JKS");
-        InputStream keyStoreIS = new FileInputStream(filepath);
-        try {
-            keyStore.load(keyStoreIS, keystorePassword.toCharArray());
-        } finally {
-            if (keyStoreIS != null) {
-                keyStoreIS.close();
-            }
-        }
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        kmf.init(keyStore, keyPassword.toCharArray());
-        return kmf.getKeyManagers();
-    }
-
-    protected TrustManager[] createTrustManagers(String filepath, String keystorePassword) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException {
-        KeyStore trustStore = KeyStore.getInstance("JKS");
-        InputStream trustStoreIS = new FileInputStream(filepath);
-        try {
-            trustStore.load(trustStoreIS, keystorePassword.toCharArray());
-        } finally {
-            if (trustStoreIS != null) {
-                trustStoreIS.close();
-            }
-        }
-        TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        trustFactory.init(trustStore);
-        return trustFactory.getTrustManagers();
+        this.context = context;
     }
 
     @Override

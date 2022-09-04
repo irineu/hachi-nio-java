@@ -1,21 +1,40 @@
-package com.irineuantunes.hachinio;
+package com.irineuantunes.hachinio.test.samples;
 
 import com.google.gson.Gson;
+import com.irineuantunes.hachinio.HachiNIOTLSClient;
 import com.irineuantunes.hachinio.network.HachiNIOConnection;
 import com.irineuantunes.hachinio.network.handlers.HachiNIOHandler;
 
+import javax.net.ssl.*;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainClient {
+public class MainTLSClient {
+    private static HachiNIOTLSClient client;
 
-    static HachiNIOClient client;
+    private static TrustManager[] trustAllCerts = new TrustManager[] {
+            new X509TrustManager() {
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+            }
+    };
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, KeyManagementException {
 
-        client = new HachiNIOClient("127.0.0.1", 3575, new HachiNIOHandler(){
+        SSLContext context = SSLContext.getInstance("TLSv1.2");
+        context.init(null, trustAllCerts, new SecureRandom());
+
+        client = new HachiNIOTLSClient("127.0.0.1", 3575, context, new HachiNIOHandler(){
 
             @Override
             public void onConnect(HachiNIOConnection connection) {
@@ -38,7 +57,7 @@ public class MainClient {
 
             @Override
             public void onClientError(Throwable ex, HachiNIOConnection connection) {
-
+                ex.printStackTrace();
             }
 
             @Override
