@@ -13,7 +13,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            HachiNIOServer server = new HachiNIOServer("127.0.0.1", 3575, new HachiNIOServerHandler() {
+            HachiNIOServer server = new HachiNIOServer("127.0.0.1", 7890, new HachiNIOServerHandler() {
                 @Override
                 public void onConnect(HachiNIOConnection connection) {
                     System.out.println("on connect");

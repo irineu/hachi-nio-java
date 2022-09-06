@@ -2,6 +2,7 @@ package com.irineuantunes.hachinio.network.handlers.protocol;
 
 import com.irineuantunes.hachinio.network.HachiNIOConnection;
 import com.google.gson.Gson;
+import com.irineuantunes.hachinio.util.ByteUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class ProtocolWritter {
 
         String strHeader = new Gson().toJson(header);
 
-        int totalLen = 8 + strHeader.getBytes(StandardCharsets.UTF_8).length + data.length;
+        int totalLen = ByteUtil.PREFIX_BUFFER.length + ByteUtil.HACHI_LEN + strHeader.getBytes(StandardCharsets.UTF_8).length + data.length;
         ByteBuffer szTotal = ByteBuffer.allocate(4);
         szTotal.order(ByteOrder.LITTLE_ENDIAN);
         szTotal.putInt(totalLen);
@@ -27,6 +28,7 @@ public class ProtocolWritter {
         szHeader.order(ByteOrder.LITTLE_ENDIAN);
         szHeader.putInt(headerLen);
 
+        byteArrayOutputStream.write(ByteUtil.PREFIX_BUFFER);
         byteArrayOutputStream.write(szTotal.array());
         byteArrayOutputStream.write(szHeader.array());
         byteArrayOutputStream.write(strHeader.getBytes(StandardCharsets.UTF_8));

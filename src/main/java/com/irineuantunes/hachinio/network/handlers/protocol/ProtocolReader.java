@@ -6,8 +6,11 @@ import com.irineuantunes.hachinio.network.HachiNIOConnection;
 import com.irineuantunes.hachinio.util.ByteUtil;
 import com.google.gson.Gson;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -23,11 +26,28 @@ public class ProtocolReader {
 
                 if (connection.getMessageLength() == -1){
                     //System.out.println("will read message len");
+
+                    //read prefix
+                    pos = ByteUtil.PREFIX_BUFFER.length;
+
                     int len = ByteBuffer.wrap(Arrays.copyOfRange(arr, pos, pos + ByteUtil.INT_LEN))
                             .order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
 
                     if(len == 0){
                         continue;
+                    }
+
+                    if(arr.length >= ByteUtil.PREFIX_BUFFER.length){
+
+                        ByteArrayOutputStream protocol_prefix = new ByteArrayOutputStream();
+                        protocol_prefix.write(Arrays.copyOfRange(arr, 0, ByteUtil.PREFIX_BUFFER.length));
+
+                        if(!Arrays.equals(protocol_prefix.toByteArray(), ByteUtil.PREFIX_BUFFER)){
+                            System.out.println(ByteUtil.bytesToHex(protocol_prefix.toByteArray()));
+                            System.out.println("Read Protocol Problem");
+                            connection.getSocketChannel().write(ByteBuffer.wrap("Protocol Problem.\n".getBytes(StandardCharsets.UTF_8)));
+                            connection.getSocketChannel().close();
+                        }
                     }
 
                     connection.setMessageLength(len);

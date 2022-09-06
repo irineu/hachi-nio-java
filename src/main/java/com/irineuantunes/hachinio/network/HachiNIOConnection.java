@@ -79,7 +79,7 @@ public class HachiNIOConnection {
     }
 
     public int getDataLength() {
-        return getMessageLength() - getHeaderLength() - ByteUtil.HACHI_LEN;
+        return getMessageLength() - getHeaderLength() - ByteUtil.HACHI_LEN - ByteUtil.PREFIX_BUFFER.length;
     }
 
     public void setHeaderLength(int headerLength) {

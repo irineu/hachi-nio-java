@@ -16,7 +16,7 @@ public class MainClient {
 
     public static void main(String[] args) {
 
-        client = new HachiNIOClient("127.0.0.1", 3575, new HachiNIOHandler(){
+        client = new HachiNIOClient("127.0.0.1", 7890, new HachiNIOHandler(){
 
             @Override
             public void onConnect(HachiNIOConnection connection) {

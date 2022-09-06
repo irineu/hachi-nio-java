@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 
 public class ByteUtil {
 
+    public static byte[] PREFIX_BUFFER = "HNIO".getBytes(StandardCharsets.UTF_8);
     public static short HACHI_LEN = 8;
     public static short INT_LEN = 4;
 
