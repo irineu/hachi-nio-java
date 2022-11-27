@@ -34,13 +34,13 @@ public class MainTLSClient {
         SSLContext context = SSLContext.getInstance("TLSv1.2");
         context.init(null, trustAllCerts, new SecureRandom());
 
-        client = new HachiNIOTLSClient("127.0.0.1", 3575, context, new HachiNIOHandler(){
+        client = new HachiNIOTLSClient("127.0.0.1", 7890, context, new HachiNIOHandler(){
 
             @Override
             public void onConnect(HachiNIOConnection connection) {
-                System.out.println("on connect");
+                System.out.println("on connect!!!!");
                 Map m = new HashMap();
-                m.put("transaction", "123");
+                m.put("transaction", "ping");
 
                 try {
                     connection.send(m, "hello".getBytes(StandardCharsets.UTF_8));

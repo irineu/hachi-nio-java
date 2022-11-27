@@ -7,6 +7,7 @@ import com.irineuantunes.hachinio.network.handlers.protocol.ProtocolReader;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,7 +60,23 @@ public class TLSClientReadCompletionHandler extends TLSReadCompletionHandler{
                     this.handleBufferUnderflow(connection);
                     break;
                 case BUFFER_OVERFLOW:
-                    throw new RuntimeException("Read overflow");
+                    //throw new RuntimeException("Read overflow TLS");
+                    System.out.println("Read overflow TLS "+ connection.getSocketByteBuffer().array().length + " " + connection.getEngine().getSession().getApplicationBufferSize() );
+                    int currentCapacity = connection.getSocketByteBuffer().array().length;
+                    int proposedCapacity = connection.getEngine().getSession().getApplicationBufferSize(); //16704
+
+                    if(proposedCapacity > currentCapacity){
+
+                    }else{
+                        proposedCapacity = currentCapacity + 8;
+                    }
+
+                    ByteBuffer bf = ByteBuffer.allocate(proposedCapacity);
+                    connection.getSocketByteBuffer().flip();
+                    bf.put(connection.getSocketByteBuffer());
+                    connection.setSocketByteBuffer(bf);
+                    doSSLCyle(readResult, connection);
+                    break;
                 case CLOSED:
                     System.out.println("client closed... TODO");
                 default:

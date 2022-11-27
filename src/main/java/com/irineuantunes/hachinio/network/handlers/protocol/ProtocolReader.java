@@ -24,13 +24,21 @@ public class ProtocolReader {
                 retry = false;
                 int pos = 0;
 
+                for (int i = 0; i < arr.length; i++) {
+                    if(arr[i] != 0){
+                        pos = i;
+                        break;
+                    }
+                }
+
                 if (connection.getMessageLength() == -1){
                     //System.out.println("will read message len");
 
                     //read prefix
-                    pos = ByteUtil.PREFIX_BUFFER.length;
+                    //pos = pos + ByteUtil.PREFIX_BUFFER.length;
 
-                    int len = ByteBuffer.wrap(Arrays.copyOfRange(arr, pos, pos + ByteUtil.INT_LEN))
+                    int begin = pos + ByteUtil.PREFIX_BUFFER.length;
+                    int len = ByteBuffer.wrap(Arrays.copyOfRange(arr, begin, begin + ByteUtil.INT_LEN))
                             .order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
 
                     if(len == 0){
@@ -40,7 +48,7 @@ public class ProtocolReader {
                     if(arr.length >= ByteUtil.PREFIX_BUFFER.length){
 
                         ByteArrayOutputStream protocol_prefix = new ByteArrayOutputStream();
-                        protocol_prefix.write(Arrays.copyOfRange(arr, 0, ByteUtil.PREFIX_BUFFER.length));
+                        protocol_prefix.write(Arrays.copyOfRange(arr, pos, pos + ByteUtil.PREFIX_BUFFER.length));
 
                         if(!Arrays.equals(protocol_prefix.toByteArray(), ByteUtil.PREFIX_BUFFER)){
                             System.out.println(ByteUtil.bytesToHex(protocol_prefix.toByteArray()));
@@ -51,7 +59,7 @@ public class ProtocolReader {
                     }
 
                     connection.setMessageLength(len);
-                    pos += ByteUtil.INT_LEN;
+                    pos += ByteUtil.INT_LEN + ByteUtil.PREFIX_BUFFER.length;
                 }
 
                 if (connection.getHeaderLength() == -1){
@@ -88,8 +96,17 @@ public class ProtocolReader {
                 }
 
                 if(pos < arr.length){
+
                     arr = Arrays.copyOfRange(arr, pos, arr.length);
-                    retry = true;
+
+                    for (int i = 0; i < arr.length; i++) {
+                        if(arr[i] != 0){
+                            retry = true;
+                            break;
+                        }
+                    }
+
+                    //retry = true;
                 }
             }
         } catch (IOException e) {

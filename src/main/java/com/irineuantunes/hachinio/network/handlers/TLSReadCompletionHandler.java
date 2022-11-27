@@ -134,7 +134,26 @@ public abstract class TLSReadCompletionHandler  implements CompletionHandler<Int
                 case BUFFER_UNDERFLOW:
                     throw new RuntimeException("Write underflow");
                 case BUFFER_OVERFLOW:
-                    throw new RuntimeException("Write overflow");
+                    System.out.println("OVERFLOW " + connection.getRawWriteSocketByteBuffer().array().length + " " + connection.getEngine().getSession().getPacketBufferSize() );
+
+                    int currentCapacity = connection.getRawWriteSocketByteBuffer().array().length;
+                    int proposedCapacity = connection.getEngine().getSession().getPacketBufferSize();;//connection.getEngine().getSession().getApplicationBufferSize();
+
+                    if(proposedCapacity > currentCapacity){
+
+                    }else{
+                        proposedCapacity = proposedCapacity * 2;
+                    }
+
+                    ByteBuffer bf = ByteBuffer.allocate(proposedCapacity);
+                    connection.getRawWriteSocketByteBuffer().flip();
+                    bf.put(connection.getRawWriteSocketByteBuffer());
+                    connection.setRawWriteSocketByteBuffer(bf);
+
+                    doSSLCyle(readResult, connection);
+                    break;
+
+                    //throw new RuntimeException("Write overflow");
                 case CLOSED:
                     try{
                         connection.getRawWriteSocketByteBuffer().flip();

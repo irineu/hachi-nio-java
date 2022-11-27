@@ -79,4 +79,8 @@ public class HachiNIOTLSConnection extends HachiNIOConnection{
                 throw new IllegalStateException("Invalid SSL status: " + result.getStatus());
         }
     }
+
+    public void setRawWriteSocketByteBuffer(ByteBuffer replaceBuffer) {
+        this.rawWriteSocketByteBuffer = replaceBuffer;
+    }
 }

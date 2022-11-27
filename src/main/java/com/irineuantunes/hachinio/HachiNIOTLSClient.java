@@ -40,6 +40,9 @@ public class HachiNIOTLSClient extends HachiNIOClient{
                 int applicationBufferSize = dummySession.getApplicationBufferSize();
                 dummySession.invalidate();
 
+                System.out.println(applicationBufferSize);
+                packetBufferSize = 256;
+
                 connection = new HachiNIOTLSConnection(ByteBuffer.allocate(applicationBufferSize),
                         ByteBuffer.allocate(packetBufferSize),
                         ByteBuffer.allocate(packetBufferSize),
