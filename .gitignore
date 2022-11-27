@@ -2,3 +2,4 @@
 .idea/*
 dist/
 target/
+.DS_Store

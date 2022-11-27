@@ -11,6 +11,8 @@ public class ProcessUtil {
     public static void attach(HachiNIO hachiNIO) {
         if (ProcessUtil.livingThread == null) {
             ProcessUtil.livingThread = new LivingThread();
+        }else if (ProcessUtil.livingThread.getState() == Thread.State.TERMINATED){
+            ProcessUtil.livingThread = new LivingThread();
         }
 
         ProcessUtil.livingThread.attach(hachiNIO);
@@ -28,7 +30,8 @@ class LivingThread extends Thread{
     public void attach(HachiNIO hachiNIO){
         this.serversAndClients.add(hachiNIO);
 
-        if(!this.isAlive()){
+        //if(!this.isAlive()){
+        if(this.getState() == Thread.State.NEW){
             this.start();
         }
     }
